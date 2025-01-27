@@ -1,23 +1,20 @@
 <script setup>
-import { ref } from 'vue'
+import { useCounterStore } from '../store/counter';
+import { computed } from 'vue';
 
 defineProps({
   msg: String,
 })
 
-const count = ref(0)
+const counter = useCounterStore();
+const count = computed(() => counter.count);
 </script>
 
 <template>
   <h1>{{ msg }}</h1>
 
   <div class="card">
-    <button type="button" @click="count++">count is {{ count }}</button>
+    <button type="button" @click="counter.increment()">increment is {{ count }}</button>
+    <n-button @click="counter.decrement()">decrement is {{ count }}</n-button>
   </div>
 </template>
-
-<style scoped>
-.read-the-docs {
-  color: #888;
-}
-</style>
