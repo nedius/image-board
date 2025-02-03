@@ -12,28 +12,29 @@ export default defineConfig({
         vue(),
         vueDevTools(),
         DirResolverHelper(),
-        // AutoGenerateImports(),
         AutoImport({
-            // imports: [
-            //     'vue',
-            //     {
-            //         'naive-ui': [
-            //             'useDialog',
-            //             'useMessage',
-            //             'useNotification',
-            //             'useLoadingBar'
-            //         ]
-            //     }
-            // ],
-            imports: AutoGenerateImports(),
+            imports: [
+                'vue',
+                {
+                    'naive-ui': [
+                        'useDialog',
+                        'useMessage',
+                        'useNotification',
+                        'useLoadingBar'
+                    ]
+                },
+                AutoGenerateImports(),
+            ], 
+            resolvers: [
+                dirResolver({
+                    target: 'src/stores',
+                    suffix: 'Store',
+                }),
+            ],
         }),
         Components({
             resolvers: [
                 NaiveUiResolver(),
-                // dirResolver({
-                //     target: 'src/stores',
-                //     suffix: 'Store',
-                // }),
             ],
         }),
     ],
