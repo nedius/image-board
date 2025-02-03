@@ -2,8 +2,8 @@ import {defineStore } from "pinia"
 
 export const useSettingsStore = defineStore("settings" , {
     state: () => ({
-        theme: "dark",
-        locale: "en",
+        theme: "auto", // "light" | "dark" | "auto"
+        locale: "en", 
     }),
     actions: {
         setTheme(theme) {
@@ -13,4 +13,5 @@ export const useSettingsStore = defineStore("settings" , {
             this.locale = locale;
         },
     },
+    persist: true,
 });
