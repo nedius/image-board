@@ -43,7 +43,7 @@ const changeTheme = () => {
                                         <span>header</span>
                                         <NButton @click="changeTheme">{{ settings.theme }}</NButton>
                                     </n-layout-header>
-                                    <Menu style="min-height: 100%;"></Menu>
+                                    <Menu></Menu>
                                 </n-layout>
                             <!-- </n-space> -->
                         <!-- </n-dialog-provider>

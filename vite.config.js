@@ -39,6 +39,7 @@ export default defineConfig({
         }),
     ],
     server: {
-        host: true
+        host: true,
+        allowedHosts: ['.nedius.com', '.trycloudflare.com'],
     },
 })
