@@ -1,9 +1,6 @@
 <script setup>
-// import HelloWorld from './components/HelloWorld.vue'
-// import { computed, ref } from 'vue'
-// import { darkTheme, useOsTheme, NButton, NConfigProvider } from 'naive-ui'
 import { darkTheme, useOsTheme } from 'naive-ui'
-import { useSettingsStore } from './stores/settings'
+import { MenuFilled } from '@vicons/material';
 
 const settings = useSettingsStore();
 const osThemeRef = useOsTheme();
@@ -41,7 +38,11 @@ const changeTheme = () => {
                                 <n-layout position="absolute">
                                     <n-layout-header bordered style="height: 64px; padding: 24px">
                                         <span>header</span>
-                                        <NButton @click="changeTheme">{{ settings.theme }}</NButton>
+                                        <n-button @click="changeTheme">{{ settings.theme }}</n-button>
+                                        <n-button text @click="settings.toggleSidebar()">
+                                            <n-icon :component="MenuFilled" size="25" />
+                                            {{ settings.isSidebarOpen }}
+                                        </n-button>
                                     </n-layout-header>
                                     <Menu></Menu>
                                 </n-layout>

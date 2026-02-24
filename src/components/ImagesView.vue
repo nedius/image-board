@@ -1,16 +1,11 @@
 <script setup>
-import { computed } from 'vue';
-import { useCounterStore } from '../stores/counter';
-// import { computed } from 'vue';
-import { computedAsync, get } from '@vueuse/core'
 import { useThrottleFn } from '@vueuse/core';
-// import { shallowRef } from 'vue'
-// import { ref } from 'vue';
-import { onMounted } from 'vue'
 
-defineProps({
-    msg: String,
+const props = defineProps({
+    msg: String
 })
+
+const emit = defineEmits(['update:size']);
 
 // const currentIndex = ref(0);
 const currentPage = ref(1);
@@ -57,6 +52,17 @@ onMounted(() => {
     getImages(currentPage.value).then(newImages => {
         addToImageArr(newImages);
     });
+
+    window.addEventListener('scroll', handleInfiniteScrollLoad);
+});
+
+onBeforeUnmount(() => {
+    window.removeEventListener('scroll', handleInfiniteScrollLoad);
+});
+
+watch(imageArr, (newArr) => {
+    console.log(`imageArr updated, total images: ${newArr.length}`);
+    emit('update:size', newArr.length);
 });
 
 </script>
@@ -66,7 +72,7 @@ onMounted(() => {
     <div class="grid-container" id="gridContainer">
         <n-image-group @update:current="handleUpdateCurrent">
             <!-- <n-infinite-scroll :ref="nInfiniteScroll" @load="handleInfiniteScrollLoad" :distance="1000"> -->
-                <ImageCard class="grid-item" v-for="item in imageArr" :key="item.id" :content="(item.id+1) + ': ' + item.raw.id + ', ' + item.width + 'x' + item.height" :image="item.src" :height="item.height" :width="item.width" />
+                <ImageCard class="grid-item" v-for="item in imageArr" :key="item.id" :rawData="item" :content="(item.id+1) + ': ' + item.raw.id + ', ' + item.width + 'x' + item.height"/>
             <!-- </n-infinite-scroll> -->
         </n-image-group>
     </div>

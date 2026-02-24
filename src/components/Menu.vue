@@ -1,10 +1,22 @@
 <script setup>
-import ImagesView from './ImagesView.vue';
+import { ref } from 'vue';
+
 
 const menuCollapsed = Math.max(window.screen.width, window.innerWidth) < 700;
 const isFooterFixed = computed(() =>{
     let menuContent = document.getElementById('menu-content') || 0;
     return menuContent.clientHeight < window.innerHeight - 64;
+});
+
+const settings = useSettingsStore();
+const isCollapsed = computed(() => {
+    return !settings.isSidebarOpen;
+});
+
+const shownImagesCount = ref(0);
+
+onMounted(() => {
+    settings.setSidebarOpen(!menuCollapsed);
 });
 </script>
 
@@ -12,7 +24,8 @@ const isFooterFixed = computed(() =>{
     <n-layout has-sider position="absolute" style="top: 64px;" sider-placement="right">
         <n-layout id="menu-scrollbar" :nativeScrollbar="false">
             <n-layout ref="menuContent" id="menu-content" content-style="padding: 24px;">
-                <ImagesView msg="Modular Image Board" />
+                <h1 v-show="!(shownImagesCount > 0)">very beautiful image</h1>
+                <ImagesView msg="Modular Image Board" @update:size="(count) => shownImagesCount = count"/>
             </n-layout>
             <n-layout-footer
                 :class="{ 'fixed-footer': isFooterFixed }"
@@ -33,8 +46,11 @@ const isFooterFixed = computed(() =>{
             :collapsed-width="0"
             :nativeScrollbar="false"
             :default-collapsed=menuCollapsed
-        >
-            <p v-for="item in [...Array(20).keys()]" :key="item.id">side filter</p>
+            :collapsed=isCollapsed
+            @collapse="settings.setSidebarOpen(false)"
+            @expand="settings.setSidebarOpen(true)"
+        >            
+            <SideMenu />
         </n-layout-sider>
     </n-layout>
 </template>
