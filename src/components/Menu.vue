@@ -92,7 +92,11 @@ onMounted(() => {
         width: 100%;
     }
     #menu-content {
-        /* overflow: hidden; */
-        min-width: 650px;
+        min-width: 600px;
+    }
+    @media (max-width: 600px) {
+        #menu-content {
+            min-width: 320px ;
+        }
     }
 </style>

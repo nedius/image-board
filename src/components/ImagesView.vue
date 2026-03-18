@@ -151,6 +151,13 @@ queryParams.$onAction((action) => {
         width: auto;
         max-width: 100%;
     }
+
+    @media (max-width: 600px) {
+            .grid-item .n-image,
+            .grid-item video[n-video] {
+                height: auto;
+            }
+    }
     .n-image:empty {
         height: 0px;
     }
