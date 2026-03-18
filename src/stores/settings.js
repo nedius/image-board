@@ -1,4 +1,4 @@
-    export const useSettingsStore = defineStore("settings" , {
+export const useSettingsStore = defineStore("settings" , {
     state: () => ({
         theme: "auto", // "light" | "dark" | "auto"
         locale: "en", 

@@ -7,12 +7,16 @@ const props = defineProps({
 
 const emit = defineEmits(['update:size']);
 
+const queryParams = useQueryStore();
+
 // const currentIndex = ref(0);
 const currentPage = ref(1);
 
 const imageArr = ref([]);
 const getImages = async (page) => {
-    const data = await fetch(`${import.meta.env.VITE_IMAGE_BOARD_API_URL}/query?tags=cat&rating=sfw&score=50&limit=6&page=${page}`).then(res => res.json());
+    const apiUrl = `${import.meta.env.VITE_IMAGE_BOARD_API_URL}/query?${queryParams.getString}&page=${page}`;
+    // const apiUrl = `${import.meta.env.VITE_IMAGE_BOARD_API_URL}/query?tags=cat&rating=sfw&score=50&limit=6&page=${page}`;
+    const data = await fetch(apiUrl).then(res => res.json());
     let newImages = [];
     data.result.forEach((item, index) => {
         newImages.push({
@@ -27,7 +31,10 @@ const getImages = async (page) => {
 }
 const addToImageArr = (newImages) => {
     imageArr.value = [...imageArr.value, ...newImages];
+    console.log(`Added ${newImages.length} images, total images: ${imageArr.value.length}`);
+    console.log(newImages);
 }
+
 const handleUpdateCurrent = (current) => {
     console.log(`current image index: ${current}/${imageArr.value.length}`);
     if (current >= imageArr.value.length - 3) {
@@ -39,9 +46,17 @@ const handleUpdateCurrent = (current) => {
         });
     }
 }
+
+const clearImageArr = () => {
+    imageArr.value = [];
+    currentPage.value = 1;
+}
+
 const handleInfiniteScrollLoad = useThrottleFn(() => {
         console.log('infinite scroll load triggered');
-        currentPage.value += 1;
+        if (!queryParams.hasRandom){
+            currentPage.value += 1;
+        }
         getImages(currentPage.value).then(newImages => {
             addToImageArr(newImages);
         });
@@ -65,6 +80,30 @@ watch(imageArr, (newArr) => {
     emit('update:size', newArr.length);
 });
 
+queryParams.$onAction((action) => {
+    console.log(`Action triggered:`, action);
+    // console.log(action.after);
+    if (!(action.name == 'doSearch' || action.name == 'doClear')) return;
+
+    action.after(() => {
+        if (!(action.name == 'doSearch' || action.name == 'doClear')) return;
+        // console.log('Search parameters updated, refreshing images...');
+        switch (action.name) {
+            case 'doSearch':
+                    getImages(currentPage.value).then(newImages => {
+                        clearImageArr();
+                        addToImageArr(newImages);
+                    });
+                break;
+            case 'doClear':
+                    clearImageArr();
+                break;
+            default:
+                return;
+        }
+    });
+});
+
 </script>
 
 <template>
@@ -72,7 +111,13 @@ watch(imageArr, (newArr) => {
     <div class="grid-container" id="gridContainer">
         <n-image-group @update:current="handleUpdateCurrent">
             <!-- <n-infinite-scroll :ref="nInfiniteScroll" @load="handleInfiniteScrollLoad" :distance="1000"> -->
-                <ImageCard class="grid-item" v-for="item in imageArr" :key="item.id" :rawData="item" :content="(item.id+1) + ': ' + item.raw.id + ', ' + item.width + 'x' + item.height"/>
+                <!-- <n-virtual-list
+                    :item-size="imageArr.length"
+                    :items="imageArr"
+                    item-resizable
+                > -->
+                    <ImageCard class="grid-item" v-for="item in imageArr" :key="item.id" :rawData="item" :content="(item.id+1) + ': ' + item.raw.id + ', ' + item.width + 'x' + item.height"/>
+                <!-- </n-virtual-list> -->
             <!-- </n-infinite-scroll> -->
         </n-image-group>
     </div>
@@ -99,7 +144,8 @@ watch(imageArr, (newArr) => {
         gap: 10px;
     }
 
-    .grid-item .n-image {
+    .grid-item .n-image,
+    .grid-item video[n-video] {
         position: relative;
         height: 400px;
         width: auto;
