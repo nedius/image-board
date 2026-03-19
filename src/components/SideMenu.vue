@@ -33,5 +33,6 @@ const queryParams = useQueryStore();
     <n-flex justify="center">
         <n-button type="primary" style="display: block; margin: 1em auto;" @click="queryParams.doSearch()">Search</n-button>
         <n-button type="warning" style="display: block; margin: 1em auto;" @click="queryParams.doClear()">Clear</n-button>
+        <n-button type="error" style="display: block; margin: 1em auto;" @click="queryParams.doClear(true)">Reset</n-button>
     </n-flex>
 </template>

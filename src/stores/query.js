@@ -33,7 +33,21 @@ export const useQueryStore = defineStore("query", {
                 if ('age' in searchParams) this.age = searchParams.age;
             }
         },
-        doClear() { /* Action ??? */}
+        doClear(reset= false) {
+            if (reset) {
+                this.hasTags = true;
+                this.tags = "cat";
+                this.rating = "sfw";
+                this.hasScore = true;
+                this.score = 50;
+                this.hasRandom = false;
+                this.random = 6;
+                this.hasLimit = true;
+                this.limit = 10;
+                this.hasAge = false;
+                this.age = 30;
+            }
+        }
     },
     getters: {
         getString: (state) => {

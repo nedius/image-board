@@ -62,17 +62,27 @@ const handleInfiniteScrollLoad = useThrottleFn(() => {
         });
 }, 500);
 
+const scrollCallback = () => {
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+    const windowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+    const documentHeight = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
+    console.log(`Scroll position: ${scrollTop}, window height: ${windowHeight}, document height: ${documentHeight}`);
+    if (scrollTop + windowHeight >= documentHeight - 100) {
+        handleInfiniteScrollLoad();
+    }
+};
+
 onMounted(() => {
     // initial load
     getImages(currentPage.value).then(newImages => {
         addToImageArr(newImages);
     });
 
-    window.addEventListener('scroll', handleInfiniteScrollLoad);
+    window.addEventListener('scroll', scrollCallback);
 });
 
 onBeforeUnmount(() => {
-    window.removeEventListener('scroll', handleInfiniteScrollLoad);
+    window.removeEventListener('scroll', scrollCallback);
 });
 
 watch(imageArr, (newArr) => {
@@ -83,10 +93,11 @@ watch(imageArr, (newArr) => {
 queryParams.$onAction((action) => {
     console.log(`Action triggered:`, action);
     // console.log(action.after);
-    if (!(action.name == 'doSearch' || action.name == 'doClear')) return;
+    const actionsToWatch = ['doSearch', 'doClear'];
+    if (!actionsToWatch.includes(action.name)) return;
 
     action.after(() => {
-        if (!(action.name == 'doSearch' || action.name == 'doClear')) return;
+        if (!actionsToWatch.includes(action.name)) return;
         // console.log('Search parameters updated, refreshing images...');
         switch (action.name) {
             case 'doSearch':

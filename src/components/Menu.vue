@@ -1,5 +1,4 @@
 <script setup>
-import { rateDark } from 'naive-ui';
 import { ref } from 'vue';
 
 const menuCollapsed = Math.max(window.screen.width, window.innerWidth) < 700;
